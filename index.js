@@ -20,16 +20,16 @@ form.addEventListener('submit', fetchWeather)
 function fetchWeather(e){
   e.preventDefault();
   userLocation = locationInput.value
-
+// first fetch to get latitude and longitude
   fetch(`${BASE_URL}/location/${userLocation}`)
   .then(resp => resp.json())
   .then(json => {
      latitude =  json.results[0].geometry.location.lat
      longitude = json.results[0].geometry.location.lng
-  }).then(location => {
+  }).then(location => { // second fetch to get weather data based on lat and long
     fetch(`${BASE_URL}/weather?loc=${latitude}_${longitude}`)
     .then(resp => resp.json())
-    .then(json => {
+    .then(json => { // set returned data to variables declared at top of page that will be used to populate the weather div
       temp = json.currently.temperature
       summary = json.currently.summary
       rainChance = json.currently.precipProbability
@@ -61,6 +61,7 @@ function fillOutData(){
   forecastP.textContent = `Forecast: ${forecast}`
   removeBtn.textContent = "Remove"
   removeBtn.classList.add('remove-btn')
+  removeBtn.addEventListener('click', removeThisDisplay)
   // **** append each new filled out section to div
   div.appendChild(locationHeader)
   div.appendChild(summaryP)
@@ -69,11 +70,11 @@ function fillOutData(){
   div.appendChild(forecastP)
   div.appendChild(removeBtn)
 
-  removeBtn.addEventListener('click', removeThisDisplay)
   // **** append the new div to the main html to be displayed ****
   weatherDisplay.appendChild(div)
 }
 
+// **** Functionality to remove a weather display, run by event listener above
 function removeThisDisplay(e) {
   let divToBeRemoved = e.target.parentNode
   divToBeRemoved.parentNode.removeChild(divToBeRemoved)
